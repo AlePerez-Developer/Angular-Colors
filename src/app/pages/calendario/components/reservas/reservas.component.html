@@ -1,0 +1,360 @@
+<div class="card ml-3 mr-3 ">
+    <div class="d-inline-block m-3" ngbDropdown #myDrop="ngbDropdown">
+        <button type="button" class="btn btn-outline-primary me-2" id="dropdownManual" ngbDropdownAnchor
+            (focus)="myDrop.open()">
+            {{dropdowntitle}}
+        </button>
+        <div ngbDropdownMenu aria-labelledby="dropdownManual">
+            <button *ngFor="let habitacion of listaHabitaciones" ngbDropdownItem
+                (click)="cambiarHabitacion(habitacion.Codigo)">{{habitacion.Descripcion}}</button>
+        </div>
+    </div>
+
+    <div class="control-section">
+        <div class="d-flex p-2 bd-highlight">
+            <ejs-schedule #scheduleObj cssClass='schedule-block-events' width='auto' height='auto' [group]="group"
+                [currentView]="currentView" [eventSettings]="eventSettings"  [selectedDate]="selectedDate" (eventRendered)="onEventRendered($event)"
+                (popupOpen)="onPopupOpen($event)">
+                <e-resources>
+                    <e-resource field='EmployeeId' title='Employees' name='Employee' [dataSource]='employeeDataSource'
+                        [allowMultiple]='allowMultiple' textField='Text' idField='Id' groupIDField="GroupId"
+                        colorField='Color'>
+                    </e-resource>
+                </e-resources>
+                <ng-template #resourceHeaderTemplate let-data>
+                    <div class="template-wrap mr-3" [style.background-color]="getcolor(data)">
+                        <div class="employee-category">
+
+                            <div>
+                                <img src="../../../../../assets/CamaIcon.png" class="employee-image" />
+                            </div>
+                            <div class="employee-name">{{getEmployeeName(data)}}</div>
+                            <div class="employee-designation">{{getEmployeeDesignation(data)}}</div>
+                        </div>
+                    </div>
+                </ng-template>
+                <ng-template #eventSettingsTemplate let-data>
+                    <div class='template-wrap'>
+                        <div class="subject">{{data.Subject}}</div>
+                    </div>
+                </ng-template>
+                <e-views>
+                    <e-view option="TimelineMonth"></e-view>
+                </e-views>
+
+                <!-- Header template -->
+                <ng-template #quickInfoTemplatesHeader let-data>
+
+                    <div class="e-popup-header">
+                        <div class="e-header-icon-wrapper">
+                            <button class="e-edit e-icons" title="Editar"></button>
+                            <button class="e-delete e-icons" title="Eliminar"></button>
+                            <button class="e-close  e-icons" title="Close"></button>
+                        </div>
+                        <div class="e-resource mx-3" style="font-size: large;">
+                            <div class="e-resource-icon e-icons" style="color: white;"></div>
+                            <div class="e-resource-details e-text-ellipsis" style="color: white;">{{data.Subject}}</div>
+                        </div>
+                        <div class="e-resource">
+                        </div>
+                    </div>
+                </ng-template>
+                <!-- Content Template -->
+                <ng-template #quickInfoTemplatesContent let-data>
+                    <div class="e-date-time mx-3">
+                        <div class="e-date-time-icon e-icons"></div>
+                        <div class="e-datet-ime-details e-text-ellipsis">Fechas: {{ data.StartTime | date: 'EEEE d, y' }} - {{
+                            data.EndTime | date: 'EEEE d, y'}}</div>
+                    </div>
+                    <div class="e-location mx-3">
+                        <div class="e-location-icon e-icons"></div>
+                        <div class="e-location-details e-text-ellipsis">Procedencia: {{data.Description}}</div>
+                    </div>
+                    <div class="e-description mx-3">
+                        <div class="e-description-icon e-icons"></div>
+                        <div class="e-description-details e-text-ellipsis">Estadia: {{data.Location}}</div>
+                    </div>
+                    <hr>
+                    <div class="container d-flex flex-row-reverse" *ngIf="data.Estado === 'R'"
+                        style="align-content: right;">
+                        <button class="btn btn-primary btn-sm" (click)="AbrirCheckIn(data.Id)"> Check In</button>
+                    </div>
+
+                    <div class="container d-flex flex-row-reverse" *ngIf="data.Estado === 'V'">
+                        <button class="btn btn-primary btn-sm"> Check Out</button>
+                    </div>
+                </ng-template>
+            </ejs-schedule>
+        </div>
+        <!--  
+<ejs-schedule #scheduleObj height="640px" [rowAutoHeight]="rowAutoHeight" [currentView]="currentView"
+                [eventSettings]="eventSettings" (eventRendered)="onEventRendered($event)" [allowDragAndDrop]='false'
+                (popupOpen)='onPopupOpen($event)' timezone="UTC" (actionBegin)="onActionBegin($event)">
+            </ejs-schedule>
+            -->
+    </div>
+</div>
+
+
+<ng-template #reservas data-bs-backdrop="static" let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+
+        <div class="container ">
+            <div class="row mb-3">
+                <div class="col-12" id="buscarpersona">
+                    <form class="buscarpersona-form">
+                        <mat-form-field class="buscarpersona-full-width" appearance="fill">
+                            <mat-label>Buscar Persona</mat-label>
+                            <input type="text" matInput [formControl]="buscarPersona" [matAutocomplete]="auto">
+                            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn"
+                                (optionSelected)="cargarPersona($event.option.value['Codigo'])">
+                                <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                                    {{option.NombreCompleto}}
+                                </mat-option>
+                            </mat-autocomplete>
+                        </mat-form-field>
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+
+                    <form [formGroup]="formPersona" (ngSubmit)="procesarGuardado()">
+                        <div class="mb-3">
+                            <button type="reset" class='btn btn-primary btn-sm mx-2' (click)="btnNuevoClick()">
+                                <i class="fa-solid fa-check"></i> Nuevo
+                            </button>
+                            <button type="button" class='btn btn-warning btn-sm mx-2' (click)="btnEditClick()"
+                                [disabled]="!Elegido">
+                                <i class="fa fa-pencil-square-o"></i> Editar
+                            </button>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-9">
+                                <div class="form-group">
+                                    <label for="idpersona" class="control-label required">Id Persona</label>
+                                    <input id="idpersona" type="text" class="form-control input-sm" autocomplete="off"
+                                        formControlName="IdPersona" placeholder="id"
+                                        [ngClass]="isFieldValidPersona('IdPersona')">
+                                    <div class="error invalid-feedback" [innerText]="getErrorMsgPersona('IdPersona')">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="form-group">
+                                    <label for="expedido" class="control-label required">Exp</label>
+                                    <input id="expedido" type="text" class="form-control input-sm" autocomplete="off"
+                                        formControlName="Expedido" placeholder="Exp"
+                                        [ngClass]="isFieldValidPersona('Expedido')">
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="paterno" class="control-label">Apellido Paterno</label>
+                            <input id="paterno" type="text" class="form-control input-sm" formControlName="APaterno"
+                                placeholder="paterno" [ngClass]="isFieldValidPersona('APaterno')">
+                            <div class="error invalid-feedback" [innerText]="getErrorMsgPersona('APaterno')">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="materno" class="control-label">Apellido Materno</label>
+                            <input id="materno" type="text" class="form-control input-sm" formControlName="AMaterno"
+                                placeholder="materno" [ngClass]="isFieldValidPersona('AMaterno')">
+                            <div class="error invalid-feedback" [innerText]="getErrorMsgPersona('AMaterno')">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="nombres" class="control-label required">Nombres</label>
+                            <input id="nombres" type="text" class="form-control input-sm" formControlName="Nombres"
+                                autocomplete="off" placeholder="Nombres" [ngClass]="isFieldValidPersona('Nombres')">
+                            <div class="error invalid-feedback" [innerText]="getErrorMsgPersona('Nombres')">
+                            </div>
+                        </div>
+
+                        <div>
+                            <button type="submit" class='btn btn-success btn-sm mx-2' [disabled]="!Edicion">
+                                <i class="fa-solid fa-circle-check"></i> Guardar
+                            </button>
+                            <button type="button" class='btn btn-danger btn-sm mx-2' [disabled]="!Edicion"
+                                (click)="btnCancelClick()">
+                                <i class='fa fa-trash-o'></i> Cancelar
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+                <div class="col-6">
+                    <form [formGroup]="formReserva" (ngSubmit)="registrarReserva()">
+                        <div class="input-group mb-3">
+                            <mat-form-field style="width: 100%">
+                                <input matInput [matDatepicker]="llegada" placeholder="Fecha llegada"
+                                    formControlName="FechaInicio">
+                                <mat-datepicker-toggle matSuffix [for]="llegada"></mat-datepicker-toggle>
+                                <mat-datepicker #llegada></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <mat-form-field style="width: 100%">
+                                <input matInput [matDatepicker]="salida" placeholder="Fecha salida"
+                                    formControlName="FechaFin">
+                                <mat-datepicker-toggle matSuffix [for]="salida"></mat-datepicker-toggle>
+                                <mat-datepicker #salida></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+
+
+                        <label for="cama" class="control-label required">Cama asignada</label>
+                        <div class="input-group mb-3">
+                            <select id="cama" class="form-select" formControlName="Cama"
+                                [ngClass]="isFieldValidReserva('Cama')">
+                                <option *ngFor="let cama of listaCamas" [ngValue]="cama.Codigo">
+                                    {{ cama.Descripcion }}
+                                </option>
+                            </select>
+                            <div class="error invalid-feedback" [innerText]="getErrorMsgReserva('Cama')"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="procedencia" class="control-label required">Lugar de procedencia</label>
+                            <input id="procedencia" type="text" class="form-control input-sm"
+                                formControlName="Procedencia" autocomplete="off" placeholder="procedencia"
+                                [ngClass]="isFieldValidReserva('Procedencia')">
+                            <div class="error invalid-feedback" [innerText]="getErrorMsgReserva('Procedencia')">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class='btn btn-outline-primary btn-lg mx-2' (click)="registrarReserva()">
+            <i class="fa-solid fa-circle-check"></i> Guardar Reserva
+        </button>
+        <button type="button" class="btn btn-outline-danger  btn-lg" (click)="c('Save click')"><i
+                class="fa-solid fa-door-closed"></i>cerrar</button>
+    </div>
+</ng-template>
+
+
+<ng-template #checkin data-bs-backdrop="static" let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <div class="container ">
+            <div class="row">
+                <div class="col-6">
+                    <div class="container" style="text-align: center;">
+                        <label>DATOS DE RESERVA</label>
+                    </div>
+                    <hr>
+                    <mat-form-field class="reserva-full-width">
+                        <mat-label>Nombre Completo</mat-label>
+                        <input matInput
+                            value="{{formPersona.controls['APaterno'].value}} {{formPersona.controls['AMaterno'].value}} {{formPersona.controls['Nombres'].value}}"
+                            readonly="true">
+                    </mat-form-field>
+                    <mat-form-field class="reserva-full-width">
+                        <mat-label>Documento de identidad</mat-label>
+                        <input matInput
+                            value="{{formPersona.controls['IdPersona'].value}} {{formPersona.controls['Expedido'].value}}"
+                            readonly="true">
+                    </mat-form-field>
+                    <div class="container text-center">
+                        <div class="row">
+                            <div class="col">
+                                <mat-form-field class="reserva-full-width">
+                                    <mat-label>Fecha Llegada</mat-label>
+                                    <input matInput
+                                        value="{{formReserva.controls['FechaInicio'].value | date: 'EEEE d, y'}}"
+                                        readonly="true">
+                                </mat-form-field>
+                            </div>
+                            <div class="col">
+                                <mat-form-field class="reserva-full-width">
+                                    <mat-label>Fecha Salida</mat-label>
+                                    <input matInput
+                                        value="{{formReserva.controls['FechaFin'].value | date: 'EEEE d, y'}}"
+                                        readonly="true">
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+                    <mat-form-field class="reserva-full-width">
+                        <mat-label>Lugar de procedencia</mat-label>
+                        <input matInput value="{{formReserva.controls['Procedencia'].value}}" readonly="true">
+                    </mat-form-field>
+                    <mat-form-field class="reserva-full-width">
+                        <mat-label>Cama asignada</mat-label>
+                        <input matInput value="cama grande" readonly="true">
+                    </mat-form-field>
+                </div>
+                <div class="col-6">
+                    <div class="container" style="text-align: center;">
+                        <label>DATOS DE CHECK IN</label>
+                    </div>
+                    <hr>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="genero" class="control-label required">Genero</label>
+                                    <input id="genero" type="text" class="form-control input-sm" autocomplete="off"
+                                        placeholder="Genero" [ngClass]="isFieldValidPersona('Genero')">
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="edad" class="control-label required">Edad</label>
+                                    <input id="edad" type="text" class="form-control input-sm" autocomplete="off"
+                                        placeholder="Edad" [ngClass]="isFieldValidPersona('Edad')">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="matrimonio" class="control-label required">Estado matrimonial</label>
+                        <input id="matrimonio" type="text" class="form-control input-sm" placeholder="Matrimonio"
+                            [ngClass]="isFieldValidPersona('Matrimonio')">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="profesion" class="control-label required">Profesion</label>
+                        <input id="profesion" type="text" class="form-control input-sm" placeholder="Profesion"
+                            [ngClass]="isFieldValidPersona('Profesion')">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="objetivo" class="control-label required">Objetivo</label>
+                        <input id="objetivo" type="text" class="form-control input-sm" placeholder="Objetivo"
+                            [ngClass]="isFieldValidPersona('Objetivo')">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="destino" class="control-label required">Destino</label>
+                        <input id="destino" type="text" class="form-control input-sm" placeholder="Destino"
+                            [ngClass]="isFieldValidPersona('Destino')">
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class='btn btn-outline-primary btn-lg mx-2' (click)="check()">
+            <i class="fa-solid fa-circle-check"></i> Registrar Check In
+        </button>
+        <button type="button" class="btn btn-outline-danger  btn-lg" (click)="c('Save click')"><i
+                class="fa-solid fa-door-closed"></i>cerrar</button>
+    </div>
+
+</ng-template>

@@ -1,0 +1,158 @@
+<div class="card ml-3 mr-3 ">
+    <div class="card-header">
+        <button id="newCama" class="btn btn-primary bg-gradient-primary" (click)="newCamaClick()">
+            <div class="icon " [ngClass]="btnstatus ? 'opened' : 'closed'">
+                <div class="circle">
+                    <div class="horizontal"></div>
+                    <div class="vertical"></div>
+                </div>
+                Formulario Camas
+            </div>
+        </button>
+    </div>
+    <div class="card-body">
+
+        <div class="card mx-auto" #collapse="ngbCollapse" [(ngbCollapse)]="!btnstatus" style="max-width: 70%;">
+            <form [formGroup]="formCama" (ngSubmit)="procesarGuardado()">
+                <div class="card-header text-bg-primary text-center">
+                    <h3 class="card-title">{{titulo}}</h3>
+                </div>
+                <div class="card-body">
+                    <input type="text" readonly hidden formControlName="codigo">
+
+                    <div class="form-group">
+                        <label for="habitacion" class="control-label required">Habitacion</label>
+                        <select id="habitacion" class="form-select" formControlName="Habitacion"
+                            [ngClass]="isFieldValid('Habitacion')">
+                            <option *ngFor="let habitacion of listaHabitaciones" [ngValue]="habitacion.Codigo">
+                                {{ habitacion.Descripcion }}
+                            </option>
+                        </select>
+                        <div class="error invalid-feedback" [innerText]="getErrorMsg('Habitacion')"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="descripcion" class="control-label required">Descripcion</label>
+                        <textarea id="descripcion" type="text" class="form-control input-sm"
+                            formControlName="Descripcion" placeholder="descripcion"
+                            [ngClass]="isFieldValid('Descripcion')" rows="2">
+                        </textarea>
+                        <div class="error invalid-feedback" [innerText]="getErrorMsg('Descripcion')"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="precio" class="control-label required">Precio</label>
+                        <input id="precio" type="number" class="form-control input-sm" formControlName="Precio"
+                            placeholder="Bs." [ngClass]="isFieldValid('Precio')" style="width: 200px;">
+                        <div class="error invalid-feedback" [innerText]="getErrorMsg('Precio')"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="color" class="control-label required">Color</label>
+                        <input id="color" type="color" class="form-control input-lg" formControlName="Color"
+                            placeholder="referencia" [ngClass]="isFieldValid('Color')" style="width: 200px;">
+                        <div class="error invalid-feedback" [innerText]="getErrorMsg('Color')"></div>
+                    </div>
+
+                </div>
+                <div class="card-footer text-center">
+                    <button type="submit" class='btn btn-primary mx-2' [disabled]="!formCama.valid"><i
+                            class='fa fa-check-circle-o'></i>
+                        Guardar</button>
+                    <button type="reset" class='btn btn-danger mx-2' (click)="newCamaClick()"><i
+                            class='fa fa-times-circle-o'></i>
+                        Cancelar</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card" #collapse="ngbCollapse" [(ngbCollapse)]="btnstatus">
+            <div class="card-header text-bg-success">
+                <h3 class="card-title">Listado de camas</h3>
+            </div>
+
+            <div class="card-body">
+                <div class="d-inline-block mr-2" ngbDropdown #myDrop="ngbDropdown">
+                    <button type="button" class="btn btn-outline-primary" 
+                        id="dropdownManual" ngbDropdownAnchor (focus)="myDrop.open()">
+                        Mostrando habitacion: {{tituloDD}}
+                    </button>
+                    <div ngbDropdownMenu aria-labelledby="dropdownManual">
+                        <button ngbDropdownItem (click)="cambio(0,'Todas')">Mostrar habitacion: Todas</button>
+                        <button *ngFor="let habitacion of listaHabitaciones" ngbDropdownItem
+                            (click)="cambio(habitacion.Codigo,habitacion.Descripcion)">Mostrar habitacion:
+                            {{habitacion.Descripcion}}</button>
+                    </div>
+                </div>
+
+                <mat-form-field appearance="standard" style="font-size: 14px; width: 50%;">
+                    <mat-label>Buscar</mat-label>
+                    <input matInput (keyup)="applyFilter($event)" placeholder="buscar.." #input autocomplete="off">
+                </mat-form-field>
+
+                <div class="mat-elevation-z8">
+                    <mat-table [dataSource]="dataSource" matSort>
+
+                        <ng-container matColumnDef="Habitacion">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Habitacion
+                            </mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.Habitacion}} </mat-cell>
+                        </ng-container>
+
+                        <ng-container matColumnDef="Descripcion">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Descripcion
+                            </mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.Descripcion}} </mat-cell>
+                        </ng-container>
+
+                        <ng-container matColumnDef="Precio">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Precio
+                            </mat-header-cell>
+                            <mat-cell *matCellDef="let row">
+                                {{ row.Precio | currency }}
+                            </mat-cell>
+                        </ng-container>
+
+                        <ng-container matColumnDef="Color">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Color
+                            </mat-header-cell>
+                            <mat-cell *matCellDef="let row">
+                                <button class='btn btn-lg' [style.background-color]="row.Color">
+                                </button>
+                            </mat-cell>
+                        </ng-container>
+
+                        <ng-container matColumnDef="estado">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Estado </mat-header-cell>
+                            <mat-cell *matCellDef="let row" data-label="estado">
+                                <button class='btn  btn-sm' (click)="changeStatus(row.Codigo)"
+                                    matTooltipPosition="right" matTooltip="Cambiar estado de la cama"
+                                    [ngClass]="(row.Estado=='V')?'btn-success':'btn-danger'">
+                                    {{ row.Estado == 'V'?'Activo':'Inactivo' }}
+                                </button>
+                            </mat-cell>
+                        </ng-container>
+
+                        <ng-container matColumnDef="acciones">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Acciones </mat-header-cell>
+                            <mat-cell *matCellDef="let row" data-label="acciones">
+                                <button class='btn btn-warning btn-sm mx-2' (click)="getCama(row.Codigo || 0)">
+                                    <i class="fa fa-pencil-square-o"></i> Editar
+                                </button>
+                                <button class='btn btn-danger btn-sm mx-2' (click)="deleteCama(row.Codigo || 0)">
+                                    <i class='fa fa-trash-o'></i> Eliminar
+                                </button>
+                            </mat-cell>
+                        </ng-container>
+                        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+
+                    </mat-table>
+                    <mat-paginator [pageSizeOptions]="[10, 20]" showFirstLastButtons aria-label="Elija pagina">
+                    </mat-paginator>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

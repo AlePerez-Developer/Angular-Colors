@@ -1,0 +1,63 @@
+.light-blue-backdrop {
+  background-color: #5cb3fd;
+}
+
+#buscarpersona {
+  border: 1px solid;
+  padding: 10px;
+
+}
+
+.buscarpersona-form {
+  min-width: 150px;
+  max-width: 500px;
+  width: 100%;
+}
+
+.buscarpersona-full-width {
+  width: 100%;
+}
+
+
+.md-icon-button+.md-datepicker-input-container {
+  float: left;
+  margin-top: 7px;
+}
+
+.control-label.required:after {
+  color: #d00;
+  content: "*";
+  position: absolute;
+  margin-left: 5px;
+}
+
+/deep/ .cdk-overlay-container {
+  z-index: 9999;
+}
+
+
+.schedule-block-events.e-schedule .employee-image {
+  width: 45px;
+  height: 40px;
+  float: left;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.schedule-block-events.e-schedule .employee-name {
+  font-size: 13px;
+}
+
+.schedule-block-events.e-schedule .employee-designation {
+  font-size: 10px;
+}
+
+.reserva-form {
+  min-width: 150px;
+  max-width: 500px;
+  width: 100%;
+}
+
+.reserva-full-width {
+  width: 100%;
+}

@@ -1,0 +1,189 @@
+<div class="card ml-3 mr-3 ">
+    <div class="card-header">
+        <button id="newUsr" class="btn btn-primary bg-gradient-primary" (click)="newUsrClick()">
+            <div class="icon " [ngClass]="btnstatus ? 'opened' : 'closed'">
+                <div class="circle">
+                    <div class="horizontal"></div>
+                    <div class="vertical"></div>
+                </div>
+                Formulario de usuario
+            </div>
+        </button>
+    </div>
+    <div class="card-body">
+
+        <div class="card mx-auto" #collapse="ngbCollapse" [(ngbCollapse)]="!btnstatus" style="max-width: 70%;">
+            <form [formGroup]="formUsuario" (ngSubmit)="procesarGuardado()">
+                <div class="card-header text-bg-primary text-center">
+                    <h3 class="card-title">{{titulo}}</h3>
+                </div>
+                <div class="card-body">
+                    <input type="text" readonly hidden formControlName="codigo">
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="ci" class="control-label required">Numero de CI</label>
+                                    <input id="ci" type="text" class="form-control input-sm" formControlName="IdPersona"
+                                        placeholder="Numero de CI" [ngClass]="isFieldValid('IdPersona')">
+                                    <div class="error invalid-feedback" [innerText]="getErrorMsg('IdPersona')"></div>
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="expedido" class="control-label required">Expedido</label>
+                                    <select id="expedido" class="form-select" style="max-width: 90% ;"
+                                        formControlName="Expedido" [ngClass]="isFieldValid('Expedido')">
+                                        <option value="Ch">Ch</option>
+                                        <option value="Lpz">Lpz</option>
+                                        <option value="Cbba">Cbba</option>
+                                        <option value="Or">Or</option>
+                                        <option value="Pt">Pt</option>
+                                        <option value="Tj">Tj</option>
+                                        <option value="Pd">Pd</option>
+                                        <option value="Scz">Scz</option>
+                                        <option value="Bn">Bn</option>
+                                    </select>
+                                    <div class="error invalid-feedback" [innerText]="getErrorMsg('Expedido')"></div>
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <label for="complemento" class="control-label">Comp.</label>
+                                    <input id="complemento" type="text" class="form-control input-sm" maxlength="3"
+                                        style="width: 65px;" formControlName="Complemento">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="apaterno" class="control-label">Apellido paterno</label>
+                                <input id="apaterno" type="text" class="form-control input-sm"
+                                    formControlName="APaterno" placeholder="Apellido paterno"
+                                    [ngClass]="isFieldValid('APaterno')">
+                                <div class="error invalid-feedback" [innerText]="getErrorMsg('APaterno')"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="amaterno" class="control-label">Apellido materno</label>
+                                <input id="amaterno" type="text" class="form-control input-sm"
+                                    formControlName="AMaterno" placeholder="Apellido materno"
+                                    [ngClass]="isFieldValid('AMaterno')">
+                                <div class="error invalid-feedback" [innerText]="getErrorMsg('AMaterno')"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="nombres" class="control-label required">Nombres</label>
+                                <input id="nombres" type="text" class="form-control input-sm" formControlName="Nombres"
+                                    placeholder="Nombres" [ngClass]="isFieldValid('Nombres')">
+                                <div class="error invalid-feedback" [innerText]="getErrorMsg('Nombres')"></div>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <div class="form-group">
+                                <label for="login" class="control-label required">Nombre de usuario</label>
+                                <input id="login" type="text" class="form-control input-sm" formControlName="Login"
+                                    placeholder="Nombre de usuario" [ngClass]="isFieldValid('Login')">
+                                <div class="error invalid-feedback" [innerText]="getErrorMsg('Login')"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="p1" class="control-label required">Contraseña</label>
+                                <input id="p1" type="password" class="form-control input-sm"
+                                    [readonly]="(formUsuario.controls['codigo'].value)?true:false"
+                                    formControlName="Pswd" placeholder="Contraseña" [ngClass]="isFieldValid('Pswd')">
+                                <div class="error invalid-feedback" [innerText]="getErrorMsg('Pswd')"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="p2" class="control-label required">Confirmar contraseña</label>
+                                <input id="p2" type="password" class="form-control input-sm"
+                                    [readonly]="(formUsuario.controls['codigo'].value)?true:false" formControlName="P2"
+                                    placeholder="Confirmar contraseña" [ngClass]="isFieldValid('P2')">
+                                <div class="error invalid-feedback" [innerText]="getErrorMsg('P2')"></div>
+                            </div>
+
+                            <div class="alert alert-danger" role="alert" *ngIf="formUsuario.errors?.['PswdMatchError']">
+                                Las contraseñas deben ser iguales
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <button type="submit" class='btn btn-primary mx-2' [disabled]="!formUsuario.valid"><i
+                            class='fa fa-check-circle-o'></i>
+                        Guardar</button>
+                    <button type="reset" class='btn btn-danger mx-2' (click)="newUsrClick()"><i
+                            class='fa fa-times-circle-o'></i>
+                        Cancelar</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card" #collapse="ngbCollapse" [(ngbCollapse)]="btnstatus">
+            <div class="card-header text-bg-success">
+                <h4 class="card-title">Listado de usuarios</h4>
+            </div>
+            <div class="card-body">
+                <mat-form-field appearance="standard" style="font-size: 14px; width: 50%;">
+                    <mat-label>Buscar</mat-label>
+                    <input matInput (keyup)="applyFilter($event)" placeholder="buscar.." #input autocomplete="off">
+                </mat-form-field>
+                <div class="mat-elevation-z8">
+                    <mat-table [dataSource]="dataSource" matSort>
+
+                        <ng-container matColumnDef="Login">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Login </mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.Login}} </mat-cell>
+                        </ng-container>
+
+                        <ng-container matColumnDef="Ci">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Ci </mat-header-cell>
+                            <mat-cell *matCellDef="let row">
+                                {{row.Ci}}
+                            </mat-cell>
+                        </ng-container>
+
+                        <ng-container matColumnDef="NombreCompleto">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Nombre Completo
+                            </mat-header-cell>
+                            <mat-cell *matCellDef="let row">
+                                {{row.NombreCompleto}}
+                            </mat-cell>
+                        </ng-container>
+
+                        <ng-container matColumnDef="Rol">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Rol </mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.Rol}} </mat-cell>
+                        </ng-container>
+
+                        <ng-container matColumnDef="estado">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Estado </mat-header-cell>
+                            <mat-cell *matCellDef="let row" data-label="estado">
+                                <button class='btn  btn-sm' (click)="changeStatus(row.Codigo)"
+                                    matTooltipPosition="right" matTooltip="Cambiar estado del usuario"
+                                    [ngClass]="(row.Estado=='V')?'btn-success':'btn-danger'">
+                                    {{ row.Estado == 'V'?'Activo':'Inactivo' }}
+                                </button>
+                            </mat-cell>
+                        </ng-container>
+
+                        <ng-container matColumnDef="acciones">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Acciones </mat-header-cell>
+                            <mat-cell *matCellDef="let row" data-label="acciones">
+                                <button class='btn btn-warning btn-sm mx-2' (click)="getUsuario(row.Codigo || 0)">
+                                    <i class="fa fa-pencil-square-o"></i> Editar
+                                </button>
+                                <button class='btn btn-danger btn-sm mx-2' (click)="deleteUSuario(row.Codigo || 0)">
+                                    <i class='fa fa-trash-o'></i> Eliminar
+                                </button>
+                            </mat-cell>
+                        </ng-container>
+                        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+
+                    </mat-table>
+                    <mat-paginator [pageSizeOptions]="[10, 20]" showFirstLastButtons aria-label="Elija pagina">
+                    </mat-paginator>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

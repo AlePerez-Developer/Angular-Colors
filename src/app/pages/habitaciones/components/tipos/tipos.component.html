@@ -1,0 +1,97 @@
+<div class="card ml-3 mr-3 ">
+    <div class="card-header">
+        <button id="newTipo" class="btn btn-primary bg-gradient-primary" (click)="newTipoClick()">
+            <div class="icon " [ngClass]="btnstatus ? 'opened' : 'closed'">
+                <div class="circle">
+                    <div class="horizontal"></div>
+                    <div class="vertical"></div>
+                </div>
+                Formulario de tipos
+            </div>
+        </button>
+    </div>
+    <div class="card-body">
+
+        <div class="card mx-auto" #collapse="ngbCollapse" [(ngbCollapse)]="!btnstatus" style="max-width: 70%;">
+            <form [formGroup]="formTipo" (ngSubmit)="procesarGuardado()">
+                <div class="card-header text-bg-primary text-center">
+                    <h3 class="card-title">{{titulo}}</h3>
+                </div>
+                <div class="card-body">
+                    <input type="text" readonly hidden formControlName="codigo">
+                    <div class="form-group">
+                        <label for="descripcion" class="control-label required">Descripcion</label>
+                        <input id="descripcion" type="text" class="form-control input-sm" formControlName="Descripcion"
+                            placeholder="descripcion" [ngClass]="isFieldValid('Descripcion')">
+                        <div class="error invalid-feedback" [innerText]="getErrorMsg('Descripcion')"></div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <button type="submit" class='btn btn-primary mx-2' [disabled]="!formTipo.valid"><i
+                            class='fa fa-check-circle-o'></i>
+                        Guardar</button>
+                    <button type="reset" class='btn btn-danger mx-2' (click)="newTipoClick()"><i
+                            class='fa fa-times-circle-o'></i>
+                        Cancelar</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card" #collapse="ngbCollapse" [(ngbCollapse)]="btnstatus">
+            <div class="card-header text-bg-success">
+                <h3 class="card-title">Listado de tipos</h3>
+            </div>
+            <div class="card-body">
+                <mat-form-field appearance="standard" style="font-size: 14px; width: 50%;">
+                    <mat-label>Buscar</mat-label>
+                    <input matInput (keyup)="applyFilter($event)" placeholder="buscar.." #input autocomplete="off">
+                </mat-form-field>
+                <div class="mat-elevation-z8">
+                    <mat-table [dataSource]="dataSource" matSort>
+                        <ng-container matColumnDef="position">
+                            <mat-header-cell *matHeaderCellDef> # </mat-header-cell>
+                            <mat-cell *matCellDef="let element; index as i"> {{paginator.pageSize * paginator.pageIndex
+                                + i + 1}}</mat-cell>
+                        </ng-container>
+
+                        <ng-container matColumnDef="Descripcion">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Descripcion </mat-header-cell>
+                            <mat-cell *matCellDef="let row">
+                                {{row.Descripcion}}
+                            </mat-cell>
+                        </ng-container>
+
+                        <ng-container matColumnDef="estado">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Estado </mat-header-cell>
+                            <mat-cell *matCellDef="let row" data-label="estado">
+                                <button class='btn  btn-sm' (click)="changeStatus(row.CodigoTipoHabitacion)"
+                                    matTooltipPosition="right" matTooltip="Cambiar estado del usuario"
+                                    [ngClass]="(row.Estado=='V')?'btn-success':'btn-danger'">
+                                    {{ row.Estado == 'V'?'Activo':'Inactivo' }}
+                                </button>
+                            </mat-cell>
+                        </ng-container>
+
+                        <ng-container matColumnDef="acciones">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Acciones </mat-header-cell>
+                            <mat-cell *matCellDef="let row" data-label="acciones">
+                                <button class='btn btn-warning btn-sm mx-2'
+                                    (click)="getTipo(row.CodigoTipoHabitacion || 0)">
+                                    <i class="fa fa-pencil-square-o"></i> Editar
+                                </button>
+                                <button class='btn btn-danger btn-sm mx-2'
+                                    (click)="deleteTipo(row.CodigoTipoHabitacion || 0)">
+                                    <i class='fa fa-trash-o'></i> Eliminar
+                                </button>
+                            </mat-cell>
+                        </ng-container>
+                        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                    </mat-table>
+
+                    <mat-paginator [pageSizeOptions]="[10, 20]" showFirstLastButtons aria-label="Elija pagina">
+                    </mat-paginator>
+                </div>
+            </div>
+        </div>
+    </div>
