@@ -71,10 +71,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "Colors:build:production"
+              "buildTarget": "Colors:build:production"
             },
             "development": {
-              "browserTarget": "Colors:build:development"
+              "buildTarget": "Colors:build:development"
             }
           },
           "defaultConfiguration": "development"
