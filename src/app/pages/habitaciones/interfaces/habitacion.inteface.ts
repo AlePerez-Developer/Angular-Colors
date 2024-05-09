@@ -8,6 +8,7 @@ export class HabitacionInterface{
               obj.Descripcion,
               obj.WebRef,
               obj.Color,
+              obj.FormaCobro,
               obj.Estado,
         )
   }
@@ -18,6 +19,7 @@ export class HabitacionInterface{
         public Descripcion: string,
         public WebRef: string,
         public Color: string,
+        public FormaCobro: string,
         public Estado: string
   ) { }
 }

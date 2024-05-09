@@ -6,6 +6,7 @@ export class Habitacion {
     Descripcion: string;
     WebRef: string;
     Color: string;
+    FormaCobro: string;
     Estado: string;
 
     constructor(CodigoHabitacion: number, TipoHabitacion: TipoHabitacion, Descripcion: string, WebRef: string, Color: string, Estado: string) {
@@ -14,6 +15,7 @@ export class Habitacion {
         this.Descripcion = Descripcion;
         this.WebRef = WebRef
         this.Color = Color
+        this.FormaCobro = "1"
         this.Estado = Estado;
     }
 

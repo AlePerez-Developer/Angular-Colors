@@ -109,6 +109,7 @@ export class HabitacionesComponent implements OnInit {
       this.formHabitacion.controls['Descripcion'].value,
       this.formHabitacion.controls['WebRef'].value || '',
       this.formHabitacion.controls['Color'].value,
+      "1",
       'V',
     )
 
