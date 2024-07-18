@@ -12,10 +12,10 @@
     </div>
     <div class="card-body">
 
-        <div class="card mx-auto" #collapse="ngbCollapse" [(ngbCollapse)]="!btnstatus" style="max-width: 70%;">
+        <div class="card mx-auto" #collapse="ngbCollapse" [ngbCollapse]="!btnstatus" style="max-width: 70%;">
             <form [formGroup]="formProducto" (ngSubmit)="procesarGuardado()">
                 <div class="card-header text-bg-primary text-center">
-                    <h3 class="card-title">{{titulo}}</h3>
+                    <h3 class="card-title" style="font-size: larger;">{{titulo}}</h3>
                 </div>
                 <div class="card-body">
                     <input type="text" readonly hidden formControlName="codigo">
