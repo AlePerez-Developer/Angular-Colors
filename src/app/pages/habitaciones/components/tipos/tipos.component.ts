@@ -36,7 +36,7 @@ export class TiposComponent implements OnInit {
     this.formTipo = this.fb.group({
       codigo: '',
       Descripcion: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(200)]],
-    })    
+    })
   }
 
   ngOnInit(): void {
@@ -44,8 +44,24 @@ export class TiposComponent implements OnInit {
   }
 
   listarTipos() {
-    this._tipohabitacionservice.getTipos().subscribe(data => {
-      this.dataSource = new MatTableDataSource(data);
+    this._tipohabitacionservice.getTipos().subscribe((data) => {
+      next: {
+        console.log(data)
+        this.dataSource = new MatTableDataSource(data.data);
+
+        this.dataSource.filterPredicate = function (data, filter: string): boolean {
+          return data.Descripcion.toLowerCase().includes(filter);
+        };
+
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+      }
+      //error: this.toastr.error(`No se pudo listar los tipos de habitacion registrados, ${data.msg}`);
+    }
+    )
+
+    /*this._tipohabitacionservice.getTipos().subscribe(data => {
+      this.dataSource = new MatTableDataSource(data.data);
 
       this.dataSource.filterPredicate = function (data, filter: string): boolean {
         return data.Descripcion.toLowerCase().includes(filter);
@@ -55,7 +71,7 @@ export class TiposComponent implements OnInit {
       this.dataSource.sort = this.sort;
     }, err => {
       this.toastr.error(`No se pudo listar los tipos de habitacion registrados, ${err.error.msg}`);
-    })
+    })*/
   }
 
   applyFilter(event: Event) {
@@ -75,7 +91,7 @@ export class TiposComponent implements OnInit {
     this.titulo = 'Actualizar tipo habitacion'
     this._tipohabitacionservice.getTipo(id).subscribe(data => {
       this.formTipo.setValue({
-        codigo: id,
+        codigo: data.CodigoTipoHabitacion,
         Descripcion: data.Descripcion,
       })
     }, err => {

@@ -62,34 +62,37 @@
                         </ng-container>
 
                         <ng-container matColumnDef="estado">
-                            <mat-header-cell *matHeaderCellDef mat-sort-header> Estado </mat-header-cell>
+                            <mat-header-cell *matHeaderCellDef> Estado </mat-header-cell>
                             <mat-cell *matCellDef="let row" data-label="estado">
-                                <button class='btn  btn-sm' (click)="changeStatus(row.CodigoTipoHabitacion)"
-                                    matTooltipPosition="right" matTooltip="Cambiar estado del usuario"
+                                <button class='btn  btn-sm btnEstado' (click)="changeStatus(row.CodigoTipoHabitacion)"
+                                    matTooltipPosition="right" matTooltip="Cambiar estado del tipo de habitacion"
                                     [ngClass]="(row.Estado=='V')?'btn-success':'btn-danger'">
-                                    {{ row.Estado == 'V'?'Activo':'Inactivo' }}
                                 </button>
                             </mat-cell>
                         </ng-container>
 
                         <ng-container matColumnDef="acciones">
-                            <mat-header-cell *matHeaderCellDef mat-sort-header> Acciones </mat-header-cell>
+                            <mat-header-cell *matHeaderCellDef> Acciones </mat-header-cell>
                             <mat-cell *matCellDef="let row" data-label="acciones">
-                                <button class='btn btn-warning btn-sm mx-2'
-                                    (click)="getTipo(row.CodigoTipoHabitacion || 0)">
-                                    <i class="fa fa-pencil-square-o"></i> Editar
-                                </button>
-                                <button class='btn btn-danger btn-sm mx-2'
-                                    (click)="deleteTipo(row.CodigoTipoHabitacion || 0)">
-                                    <i class='fa fa-trash-o'></i> Eliminar
-                                </button>
+                                <div class="btn-group" role="group" aria-label="...">
+                                    <button type="button" class='btn btn-outline-warning btn-sm btnEditar'
+                                        (click)="getTipo(row.CodigoTipoHabitacion || 0)" matTooltipPosition="right"
+                                        matTooltip="Permite editar el tipo de habitacion seleccionado">
+                                        <i class="fa fa-pencil-square-o"></i>
+                                    </button>
+                                    <button type="button" class='btn btn-outline-danger btn-sm btnEliminar'
+                                        (click)="deleteTipo(row.CodigoTipoHabitacion || 0)" matTooltipPosition="right"
+                                        matTooltip="Permite eliminar el tipo de habitacion seleccionado">
+                                        <i class='fa fa-trash-o'></i>
+                                    </button>
+                                </div>
                             </mat-cell>
                         </ng-container>
                         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                         <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
                     </mat-table>
 
-                    <mat-paginator [pageSizeOptions]="[10, 20]" showFirstLastButtons aria-label="Elija pagina">
+                    <mat-paginator [pageSizeOptions]="[10, 20, 50]" showFirstLastButtons aria-label="Elija pagina">
                     </mat-paginator>
                 </div>
             </div>

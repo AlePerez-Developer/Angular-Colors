@@ -3,6 +3,7 @@ import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { environment } from "src/environments/environment";
 import { TipoHabitacion } from "../models/TipoHabitacion";
+import { TipoInterface } from "../interfaces/tipo.interface";
 
 const URL = environment.urlServer;
 
@@ -23,7 +24,7 @@ export class TipoHabitacionService {
         return this.http.get(`${URL}/api/tipoh/${id}`)
     }
 
-    addNewTipo(tipohabitacion: any): Observable<any> {
+    addNewTipo(tipohabitacion: TipoInterface): Observable<any> {
         return this.http.post(`${URL}/api/tipoh/`, tipohabitacion)
     }
 
